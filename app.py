@@ -2,7 +2,7 @@ from flask import Flask, redirect, url_for, jsonify
 from flask_restx import Api, Resource
 from flask_cors import CORS
 
-from connection import crear_elemento, consultar_elementos, consultar_elemento_por_nombre, eliminar_elemento_por_nombre
+from connection import crear_elemento, consultar_elementos, consultar_elemento_por_nombre, eliminar_elemento_por_nombre, descargar_elemento
 
 app = Flask(__name__)
 CORS(app)
@@ -39,13 +39,22 @@ class EliminarElemento(Resource):
             return consultar_elemento_por_nombre(nombre)
         except Exception as e:
             return {"error": str(e)}, 500 
+        
+        
+@api.route("/descargar_elemento/<string:nombre>")
+class DescargarElemento(Resource):
+    def get(self, nombre):
+        try:
+            return descargar_elemento(nombre)
+        except Exception as e:
+            return {"error": str(e)}, 500 
 
     
-@api.route("/crear_elemento/<string:nombre>")
+@api.route("/crear_elemento/<path:ruta>")
 class Crear(Resource):
-    def post(self, nombre):
+    def post(self, ruta):
         try:
-            return crear_elemento(nombre)
+            return crear_elemento(ruta)
         except Exception as e:
             return {"error": str(e)}, 500
         
