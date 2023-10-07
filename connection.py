@@ -2,13 +2,16 @@ import os
 from pymongo import MongoClient
 from bucket import upload_to_bucket, delete_from_bucket, download_from_bucket
 
-client = MongoClient('mongodb://18.209.35.24:80/')
+
+client = MongoClient('mongodb://54.166.171.58:80/')
 db = client['bucket_database']  
 lista_archivos = db['lista_archivos']
 
 
 
-def crear_elemento(ruta):
+def subir_elemento(ruta):
+    test = test_connection()
+    if test != True: return test
 
     if os.path.exists(ruta):
         nombre = os.path.basename(ruta) #./test/prueba.txt
@@ -27,7 +30,7 @@ def crear_elemento(ruta):
 
                 lista_archivos.insert_one(nuevo_elemento)
                 print(f"Elemento creado: nombre='{nombre}'")
-                return {"message": f"Elemento '{nombre}' creado correctamente."}, 201  
+                return {"message": f"Elemento '{nombre}' subido correctamente."}, 201  
             except Exception as e:
                 print(f"Error al crear elemento: {str(e)}")
                 return {"error": str(e)}, 500 
@@ -39,6 +42,9 @@ def crear_elemento(ruta):
 
 
 def consultar_elementos():
+    test = test_connection()
+    if test != True: return test
+
     try:
         elementos = lista_archivos.find({})
         nombres = [elemento["nombre"] for elemento in elementos]
@@ -50,6 +56,10 @@ def consultar_elementos():
 
 
 def consultar_elemento_por_nombre(nombre):
+
+    test = test_connection()
+    if test != True: return test
+
     try:
         elemento = lista_archivos.find_one({"nombre": nombre})
         if elemento is None:
@@ -61,6 +71,10 @@ def consultar_elemento_por_nombre(nombre):
     
 
 def eliminar_elemento_por_nombre(nombre):
+
+    test = test_connection()
+    if test != True: return test
+
     try:
         eliminar = delete_from_bucket(nombre)
         if eliminar != True:
@@ -76,6 +90,10 @@ def eliminar_elemento_por_nombre(nombre):
     
 
 def descargar_elemento(nombre):
+
+    test = test_connection()
+    if test != True: return test
+
     elemento_existente = consultar_elemento_por_nombre(nombre)
     if elemento_existente[0] == False:
         return {"message": f"Elemento '{nombre}' no encontrado en la base de datos."}, 404
@@ -85,6 +103,15 @@ def descargar_elemento(nombre):
             return resultado
         except Exception as e:
             return {"error": str(e)}, 500 
+        
+def test_connection():
+    try:
+        db.command("ping")
+        return True
+
+    except Exception as e:
+        return {"error": "cannot connect to database. " + str(e)}, 500 
+
 
 
         

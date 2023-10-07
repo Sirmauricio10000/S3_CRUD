@@ -25,7 +25,7 @@ def delete_from_bucket(nombre):
         print(f"Error al eliminar el archivo del bucket: {str(e)}")
         return str(e)
     
-def download_from_bucket(nombre):
+def download_from_bucket(nombre, download_directory):
     try:
         ruta_destino = os.path.join(download_directory, nombre)
         s3_client.download_file(bucket_name, nombre, ruta_destino)
