@@ -14,7 +14,7 @@ def subir_elemento(ruta):
     if test != True: return test
 
     if os.path.exists(ruta):
-        nombre = os.path.basename(ruta) #./test/prueba.txt
+        nombre = os.path.basename(ruta) 
 
         
         elemento_existente = consultar_elemento_por_nombre(nombre)
@@ -30,6 +30,7 @@ def subir_elemento(ruta):
 
                 lista_archivos.insert_one(nuevo_elemento)
                 print(f"Elemento creado: nombre='{nombre}'")
+                
                 return {"message": f"Elemento '{nombre}' subido correctamente."}, 201  
             except Exception as e:
                 print(f"Error al crear elemento: {str(e)}")

@@ -1,4 +1,5 @@
-from flask import Flask, redirect, url_for, jsonify
+import os
+from flask import Flask, redirect, url_for, request, send_file
 from flask_restx import Api, Resource
 from flask_cors import CORS
 
@@ -45,20 +46,18 @@ class EliminarElemento(Resource):
 class DescargarElemento(Resource):
     def get(self, nombre):
         try:
-            return descargar_elemento(nombre)
+            descargar_elemento(nombre)
+
+            ruta_archivo = os.path.join("download", nombre)
+            if os.path.exists(ruta_archivo):
+                return send_file(ruta_archivo, as_attachment=True)
+            else:
+                return {"error": "El archivo no existe en el servidor."}, 404
+
         except Exception as e:
             return {"error": str(e)}, 500 
 
-    
-@api.route("/subir_elemento/<path:ruta>")
-class Crear(Resource):
-    def post(self, ruta):
-        try:
-            return subir_elemento(ruta)
-        except Exception as e:
-            return {"error": str(e)}, 500
-        
-
+         
 @api.route("/eliminar_elemento/<string:nombre>")
 class EliminarElemento(Resource):
     def delete(self, nombre):
@@ -66,6 +65,25 @@ class EliminarElemento(Resource):
             return eliminar_elemento_por_nombre(nombre)
         except Exception as e:
             return {"error": str(e)}, 500 
+
+
+@api.route("/subir_elemento")
+class Crear(Resource):
+    def post(self):
+        try:
+            archivo = request.files['file']
+
+            if archivo:
+                nombre = archivo.filename
+                ruta = os.path.join('./uploads', nombre)  
+
+                archivo.save(ruta) 
+
+                return subir_elemento(ruta)
+
+            return {"error": "No se proporcionó ningún archivo en la solicitud."}, 400
+        except Exception as e:
+            return {"error": str(e)}, 500
 
 
     
