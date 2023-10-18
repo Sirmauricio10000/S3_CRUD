@@ -3,7 +3,7 @@ from pymongo import MongoClient
 from bucket import upload_to_bucket, delete_from_bucket, download_from_bucket
 
 # Configura la cadena de conexión
-uri = "mongodb://mau:12345678@mydoccluster.cluster-colmym0lshrm.us-east-1.docdb.amazonaws.com:27017/?tls=true&tlsCAFile=global-bundle.pem&replicaSet=rs0&readPreference=secondaryPreferred&retryWrites=false"
+uri = "mongodb://mau:<12345678>@mydoccluster.cluster-colmym0lshrm.us-east-1.docdb.amazonaws.com:27017/?tls=true&tlsCAFile=global-bundle.pem&replicaSet=rs0&readPreference=secondaryPreferred&retryWrites=false"
 
 # Conéctate al clúster de Amazon DocumentDB
 client = MongoClient(uri)
